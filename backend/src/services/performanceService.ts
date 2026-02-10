@@ -708,3 +708,29 @@ const acwr = Number((acuteAvg / chronicAvg).toFixed(2));
   }
 }
 
+
+
+// {
+//     "workout": {
+//         "workoutType": "Running",
+//         "durationMin": 60,
+//         "avgHeartRate": 150,
+//         "distanceKm": 10,
+//         "cadence": 170,
+//         "workoutDate": "2026-02-08"
+//     },
+//     "analysis": {
+//         "engineeredMetrics": {
+//             "sessionLoad": 90,
+//             "gameWorkload": 90,
+//             "trainingIntensity": 1.5,
+//             "speedIndex": 10
+//         },
+//         "workload": {
+//             "acuteAvg": 90,
+//             "chronicAvg": 90,
+//             "acwr": 1,
+//             "acwrZone": "Optimal"
+//         }
+//     }
+// }

@@ -87,7 +87,13 @@ export interface WorkoutInput {
   distanceKm?: number;
   cadence?: number;
   workoutDate: string;
+  // Weightlifting
+  sets?: number;
+  reps?: number;
+  weight?: number;
+
 }
+
 
 
 export interface EngineeredMetrics {

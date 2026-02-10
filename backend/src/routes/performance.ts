@@ -17,10 +17,12 @@ const workoutAnalysisSchema = z.object({
 // Analyze a single workout (manual data entry)
 performanceRoutes.post('/analyze-workout', async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!; // available if needed later
     const workoutInput = workoutAnalysisSchema.parse(req.body);
 
-    const analysisResult = PerformanceService.analyzeWorkout(workoutInput , req.userId);
+    const analysisResult = PerformanceService.analyzeWorkout(
+      workoutInput,
+      req.userId // ✅ now available
+    );
 
     res.json({
       workout: workoutInput,
@@ -39,7 +41,6 @@ performanceRoutes.post('/analyze-workout', async (req: AuthRequest, res: Respons
     });
   }
 });
-
 
 // All performance routes require authentication
 performanceRoutes.use(authenticate);
@@ -196,3 +197,26 @@ performanceRoutes.get('/trends', async (req: AuthRequest, res: Response) => {
 });
 
 
+// {
+//     "workout": {
+//         "workoutType": "Running",
+//         "durationMin": 70,
+//         "avgHeartRate": 155,
+//         "distanceKm": 8,
+//         "workoutDate": "2026-02-09"
+//     },
+//     "analysis": {
+//         "engineeredMetrics": {
+//             "sessionLoad": 108.5,
+//             "gameWorkload": 108.5,
+//             "trainingIntensity": 1.55,
+//             "speedIndex": 6.857142857142857
+//         },
+//         "workload": {
+//             "acuteAvg": 108.5,
+//             "chronicAvg": 108.5,
+//             "acwr": 1,
+//             "acwrZone": "Optimal"
+//         }
+//     }
+// }
