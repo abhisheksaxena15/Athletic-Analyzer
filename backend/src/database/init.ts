@@ -117,6 +117,7 @@ export function initializeDatabase() {
       weight REAL,
       rest_time INTEGER,
       volume REAL,
+      training_load REAL,
       
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,

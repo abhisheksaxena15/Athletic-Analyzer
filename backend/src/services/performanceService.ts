@@ -105,17 +105,29 @@ static analyzeWorkout(workout: WorkoutInput, userId?: string) {
   //   : acuteLoad;
 
   // const acwr = this.calculateACWR(acuteLoad, chronicLoad);
-  const acuteAvg = userId
-  ? (this.getWorkloadLastNDays(userId, 7, workout.workoutDate) + engineeredMetrics.gameWorkload) / 7
+  // STEP-4: ACWR using AVERAGES (correct method)
+
+const acuteAvg = userId
+  ? (this.getWorkloadLastNDays(
+      userId,
+      7,
+new Date().toISOString()    ) + engineeredMetrics.gameWorkload) / 7
   : engineeredMetrics.gameWorkload;
 
 const chronicAvg = userId
-  ? this.getWorkloadLastNDays(userId, 28, workout.workoutDate) / 28
+  ? this.getWorkloadLastNDays(
+      userId,
+      28,
+      workout.workoutDate
+    ) / 28
   : acuteAvg;
 
-const acwr = Number((acuteAvg / chronicAvg).toFixed(2));
+// Safety fallback
+const safeChronic = chronicAvg === 0 ? acuteAvg : chronicAvg;
 
-  const acwrZone = this.getACWRZone(acwr);
+const acwr = Number((acuteAvg / safeChronic).toFixed(2));
+const acwrZone = this.getACWRZone(acwr);
+;
 
   return {
     engineeredMetrics,
@@ -648,28 +660,28 @@ const acwr = Number((acuteAvg / chronicAvg).toFixed(2));
   }
 
     // STEP-4: Get workload for last N days
-  private static getWorkloadLastNDays(
+  // STEP-4: Get AVERAGE workload for last N days (excluding current workout)
+private static getWorkloadLastNDays(
   userId: string,
   days: number,
   referenceDate: string
 ): number {
   const workouts = WorkoutService.getWorkoutsByUser(userId, 1000, 0);
 
-  console.log(`DEBUG: total workouts in DB = ${workouts.length}`);
-
   const ref = new Date(referenceDate);
   const cutoff = new Date(referenceDate);
   cutoff.setDate(cutoff.getDate() - days);
 
   const filtered = workouts.filter(w => {
-    const d = new Date(w.date);
-    // ✅ exclude the workout being analyzed
-    return d >= cutoff && d < ref;
-  });
+  const d = new Date(w.timestamp ?? w.date);
+  return d >= cutoff && d < new Date(referenceDate);
+});
 
-  console.log(`DEBUG: workouts in last ${days} days (excluding current) = ${filtered.length}`);
 
-  return filtered.reduce((sum, w) => {
+  if (filtered.length === 0) return 0;
+console.log("Filtered workouts:", filtered.length);
+
+  const totalLoad = filtered.reduce((sum, w) => {
     const intensity =
       w.avgHeartRate && w.maxHeartRate
         ? w.avgHeartRate / w.maxHeartRate
@@ -677,7 +689,11 @@ const acwr = Number((acuteAvg / chronicAvg).toFixed(2));
 
     return sum + w.duration * intensity;
   }, 0);
+
+  // ✅ THIS IS THE KEY FIX
+  return totalLoad / days; // DAILY AVERAGE
 }
+
 
 
   // STEP-4: Calculate ACWR

@@ -88,9 +88,11 @@ export interface WorkoutInput {
   cadence?: number;
   workoutDate: string;
   // Weightlifting
-  sets?: number;
-  reps?: number;
-  weight?: number;
+ maxHeartRate?: number;
+sets?: number;
+reps?: number;
+weight?: number;
+
 
 }
 

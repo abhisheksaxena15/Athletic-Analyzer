@@ -40,6 +40,7 @@ export interface WorkoutEntry {
   weight?: number;
   restTime?: number;
   volume?: number;
+  trainingLoad?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,6 +49,23 @@ export class WorkoutService {
   static createWorkout(userId: string, data: Partial<WorkoutEntry>): WorkoutEntry {
     const workoutId = randomUUID();
     const now = new Date().toISOString();
+
+    // 🔥 STEP 6: Calculate training load properly
+
+let trainingLoad = null;
+
+if (data.duration) {
+  let intensity = 0.7; // default
+
+  if (data.avgHeartRate && data.maxHeartRate) {
+    intensity = data.avgHeartRate / data.maxHeartRate;
+  } else if (data.avgHeartRate) {
+    intensity = data.avgHeartRate / 190; // fallback max HR
+  }
+
+  trainingLoad = Number((data.duration * intensity).toFixed(2));
+}
+
 
     // Calculate volume for weightlifting
     let volume = null;
@@ -63,9 +81,9 @@ export class WorkoutService {
         steps, calories_burned, stress_level, notes,
         latitude, longitude, speed, avg_speed, max_speed, cadence, distance,
         power, avg_power, max_power, cycling_cadence, elevation, elevation_gain,
-        exercise_name, sets, reps, weight, rest_time, volume,
+        exercise_name, sets, reps, weight, rest_time, volume,training_load,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       workoutId,
       userId,
@@ -105,6 +123,7 @@ export class WorkoutService {
       data.weight || null,
       data.restTime || null,
       volume,
+      data.trainingLoad || null,
       now,
       now
     );
@@ -309,6 +328,7 @@ export class WorkoutService {
       weight: row.weight,
       restTime: row.rest_time,
       volume: row.volume,
+      trainingLoad: row.training_load,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

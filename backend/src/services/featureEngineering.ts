@@ -16,22 +16,32 @@ export function engineerWorkoutFeatures(
   workout: WorkoutInput
 ): EngineeredWorkoutMetrics {
 
-  // ---------------- BASE METRICS (already correct) ----------------
-  const trainingIntensity = workout.avgHeartRate
-    ? workout.avgHeartRate / 100
-    : 0.7;
+  // ================= SAFE INTENSITY CALCULATION =================
+  let trainingIntensity = 0.7; // default base intensity
 
+  if (workout.avgHeartRate && workout.maxHeartRate) {
+    trainingIntensity = workout.avgHeartRate / workout.maxHeartRate;
+  } else if (workout.avgHeartRate) {
+    // assume estimated max HR = 190 if not provided
+    trainingIntensity = workout.avgHeartRate / 190;
+  }
+
+  // Clamp intensity between 0.5 and 1.5 (realistic range)
+  trainingIntensity = Math.max(0.5, Math.min(trainingIntensity, 1.5));
+
+  // ================= SESSION LOAD =================
   const sessionLoad = workout.durationMin * trainingIntensity;
   const gameWorkload = sessionLoad;
 
+  // ================= SPEED INDEX =================
   let speedIndex: number | undefined;
   if (workout.distanceKm && workout.durationMin > 0) {
     speedIndex = workout.distanceKm / (workout.durationMin / 60);
   }
 
-  // ================= STEP 1: AUTO-DERIVED METRICS =================
+  // ================= AUTO-DERIVED METRICS =================
 
-  // Derive avgSpeed (km/h) if not provided
+  // avgSpeed (km/h)
   let avgSpeed: number | undefined;
   if (workout.distanceKm && workout.durationMin > 0) {
     avgSpeed = Number(
@@ -39,19 +49,19 @@ export function engineerWorkoutFeatures(
     );
   }
 
-  // Derive pace (min/km) from avgSpeed
+  // pace (min/km)
   let pace: number | undefined;
   if (avgSpeed && avgSpeed > 0) {
     pace = Number((60 / avgSpeed).toFixed(2));
   }
 
-  // Weightlifting: derive volume
+  // Weightlifting volume
   let volume: number | undefined;
   if (workout.sets && workout.reps && workout.weight) {
     volume = workout.sets * workout.reps * workout.weight;
   }
 
-  // ---------------- FINAL RETURN ----------------
+  // ================= RETURN =================
   return {
     sessionLoad,
     gameWorkload,

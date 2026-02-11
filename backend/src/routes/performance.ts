@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 export const performanceRoutes = Router();
 
+
 const workoutAnalysisSchema = z.object({
   workoutType: z.enum(['Running', 'Cycling', 'Weightlifting', 'Other']),
   durationMin: z.number().positive(),
@@ -13,7 +14,8 @@ const workoutAnalysisSchema = z.object({
   cadence: z.number().positive().optional(),
   workoutDate: z.string(),
 });
-
+// All performance routes require authentication
+performanceRoutes.use(authenticate);
 // Analyze a single workout (manual data entry)
 performanceRoutes.post('/analyze-workout', async (req: AuthRequest, res: Response) => {
   try {
@@ -42,8 +44,7 @@ performanceRoutes.post('/analyze-workout', async (req: AuthRequest, res: Respons
   }
 });
 
-// All performance routes require authentication
-performanceRoutes.use(authenticate);
+
 
 const analysisQuerySchema = z.object({
   sportType: z.enum(['running', 'cycling', 'weightlifting']),
