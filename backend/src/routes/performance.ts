@@ -139,12 +139,18 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
       console.error('Error generating predictions:', error);
       predictions = [];
     }
+    const insights = PerformanceService.generateTrainingInsights(
+  metrics,
+  metrics.trainingLoad > 0 ? metrics.trainingLoad / 100 : 1
+);
+
 
     res.json({
       metrics,
       trends,
       comparisons,
       predictions,
+        insights,   // ✅ new addition
       period: {
         start: startDateStr,
         end: endDateStr,
@@ -221,3 +227,88 @@ performanceRoutes.get('/trends', async (req: AuthRequest, res: Response) => {
 //         }
 //     }
 // }
+
+
+/*
+{
+    "metrics": {
+        "totalWorkouts": 14,
+        "totalDuration": 770,
+        "totalDistance": 102,
+        "avgDuration": 55,
+        "avgDistance": 7.285714285714286,
+        "avgCadence": 168.75,
+        "avgHeartRate": 144.28571428571428,
+        "maxHeartRate": 144.28571428571428,
+        "minHeartRate": 144.28571428571428,
+        "trainingLoad": 385,
+        "fitnessScore": 40,
+        "progressTrend": "stable",
+        "progressPercentage": 0
+    },
+    "trends": [
+        {
+            "date": "2026-01-25",
+            "distance": 5,
+            "heartRate": 135,
+            "trainingLoad": 20
+        },
+        {
+            "date": "2026-02-01",
+            "distance": 37,
+            "cadence": 165,
+            "heartRate": 137.14285714285714,
+            "trainingLoad": 142.5
+        },
+        {
+            "date": "2026-02-08",
+            "distance": 60,
+            "cadence": 171,
+            "heartRate": 154.16666666666666,
+            "trainingLoad": 222.5
+        }
+    ],
+    "comparisons": [
+        {
+            "metric": "Average Cadence",
+            "userValue": 168.75,
+            "datasetAverage": 165,
+            "datasetPercentile": 75,
+            "comparison": "above_average",
+            "difference": 2.272727272727273
+        },
+        {
+            "metric": "Average Heart Rate",
+            "userValue": 144.28571428571428,
+            "datasetAverage": 150,
+            "datasetPercentile": 50,
+            "comparison": "average",
+            "difference": -3.8095238095238146
+        }
+    ],
+    "predictions": [
+        {
+            "metric": "Fitness Score",
+            "currentValue": 40,
+            "predictedValue": 88,
+            "timeframe": "3 months",
+            "confidence": 24,
+            "factors": [
+                "Current score: 40/100",
+                "Progress trend: stable",
+                "Training consistency: 14 workouts"
+            ]
+        }
+    ],
+    "insights": {
+        "fatigueScore": 100,
+        "riskLevel": "High",
+        "recommendation": "Reduce training intensity immediately.",
+        "advice": "High risk of overtraining. Prioritize recovery."
+    },
+    "period": {
+        "start": "2026-01-11",
+        "end": "2026-02-11",
+        "range": "month"
+    }
+} */

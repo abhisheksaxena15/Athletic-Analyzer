@@ -81,6 +81,45 @@ export interface FitnessPrediction {
 }
 
 export class PerformanceService {
+  static generateTrainingInsights(
+  metrics: PerformanceMetrics,
+  acwr: number
+) {
+  let fatigueScore = 0;
+  let riskLevel = 'Low';
+  let recommendation = 'Maintain current training load.';
+  let advice = 'You are training consistently. Keep monitoring recovery.';
+
+  // Fatigue calculation (0-100)
+  fatigueScore = Math.min(
+    100,
+    (metrics.trainingLoad / 10) +
+    (acwr * 20)
+  );
+
+  // Risk logic
+  if (acwr > 1.5) {
+    riskLevel = 'High';
+    recommendation = 'Reduce training intensity immediately.';
+    advice = 'High risk of overtraining. Prioritize recovery.';
+  } else if (acwr > 1.3) {
+    riskLevel = 'Moderate';
+    recommendation = 'Monitor fatigue closely.';
+    advice = 'Slight overload detected. Consider lighter session.';
+  } else if (acwr < 0.8) {
+    riskLevel = 'Undertraining';
+    recommendation = 'Increase training stimulus gradually.';
+    advice = 'Training load is low. You may not improve optimally.';
+  }
+
+  return {
+    fatigueScore: Number(fatigueScore.toFixed(2)),
+    riskLevel,
+    recommendation,
+    advice,
+  };
+}
+
 
 
   // STEP-4: Analyze a single workout with ACWR
