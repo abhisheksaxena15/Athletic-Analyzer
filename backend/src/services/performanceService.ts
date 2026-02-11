@@ -17,34 +17,34 @@ export interface PerformanceMetrics {
   totalDistance?: number; // km
   avgDuration: number;
   avgDistance?: number;
-  
+
   // Running metrics
   avgPace?: number; // min/km
   avgSpeed?: number; // km/h
   maxSpeed?: number;
   avgCadence?: number; // steps/min
   bestPace?: number; // min/km (fastest)
-  
+
   // Cycling metrics
   avgPower?: number; // watts
   maxPower?: number;
   avgCyclingCadence?: number; // rpm
   totalElevationGain?: number; // meters
-  
+
   // Weightlifting metrics
   totalVolume?: number; // kg
   avgVolume?: number;
   exercisesCount?: number;
-  
+
   // Heart rate metrics
   avgHeartRate?: number;
   maxHeartRate?: number;
   minHeartRate?: number;
-  
+
   // Training load
   trainingLoad: number; // calculated score
   trainingStressScore?: number;
-  
+
   // Progress indicators
   fitnessScore: number; // 0-100
   progressTrend: 'improving' | 'stable' | 'declining';
@@ -81,118 +81,156 @@ export interface FitnessPrediction {
 }
 
 export class PerformanceService {
-  static generateTrainingInsights(
-  metrics: PerformanceMetrics,
-  acwr: number
-) {
-  let fatigueScore = 0;
-  let riskLevel = 'Low';
-  let recommendation = 'Maintain current training load.';
-  let advice = 'You are training consistently. Keep monitoring recovery.';
 
-  // Fatigue calculation (0-100)
-  fatigueScore = Math.min(
-    100,
-    (metrics.trainingLoad / 10) +
-    (acwr * 20)
-  );
-
-  // Risk logic
-  if (acwr > 1.5) {
-    riskLevel = 'High';
-    recommendation = 'Reduce training intensity immediately.';
-    advice = 'High risk of overtraining. Prioritize recovery.';
-  } else if (acwr > 1.3) {
-    riskLevel = 'Moderate';
-    recommendation = 'Monitor fatigue closely.';
-    advice = 'Slight overload detected. Consider lighter session.';
-  } else if (acwr < 0.8) {
-    riskLevel = 'Undertraining';
-    recommendation = 'Increase training stimulus gradually.';
-    advice = 'Training load is low. You may not improve optimally.';
-  }
-
+  static detectLoadSpike(trends: PerformanceTrend[]) {
+if (trends.length < 2) {
   return {
-    fatigueScore: Number(fatigueScore.toFixed(2)),
-    riskLevel,
-    recommendation,
-    advice,
+    spikeDetected: false,
+    increasePercent: 0,
+    message: "Not enough historical data to detect spike."
   };
 }
+
+    const last = trends[trends.length - 1];
+    const previous = trends[trends.length - 2];
+
+    if (!last.distance || !previous.distance) return null;
+
+    const increasePercent =
+      ((last.distance - previous.distance) / previous.distance) * 180;
+
+    if (increasePercent > 30) {
+      return {
+        spikeDetected: true,
+        increasePercent: Number(increasePercent.toFixed(1)),
+        message: `Weekly training volume increased by ${increasePercent.toFixed(
+          1
+        )}%. Rapid load spikes increase injury risk.`,
+      };
+    }
+
+    return {  
+      spikeDetected: false,
+      increasePercent: Number(increasePercent.toFixed(1)),
+    };
+  }
+
+
+
+  static generateTrainingInsights(
+    metrics: PerformanceMetrics,
+    acwr: number
+  ) {
+    let fatigueScore = 0;
+    let riskLevel = 'Low';
+    let recommendation = 'Maintain current training load.';
+    let advice = 'You are training consistently. Keep monitoring recovery.';
+
+    // Fatigue calculation (0-100)
+    fatigueScore = Math.min(
+      100,
+      (metrics.trainingLoad / 10) +
+      (acwr * 20)
+    );
+
+    // Risk logic
+    if (acwr > 1.5) {
+      riskLevel = 'High';
+      recommendation = 'Reduce training intensity immediately.';
+      advice = 'High risk of overtraining. Prioritize recovery.';
+    } else if (acwr > 1.3) {
+      riskLevel = 'Moderate';
+      recommendation = 'Monitor fatigue closely.';
+      advice = 'Slight overload detected. Consider lighter session.';
+    } else if (acwr < 0.8) {
+      riskLevel = 'Undertraining';
+      recommendation = 'Increase training stimulus gradually.';
+      advice = 'Training load is low. You may not improve optimally.';
+    }
+
+    return {
+      fatigueScore: Number(fatigueScore.toFixed(2)),
+      riskLevel,
+      recommendation,
+      advice,
+    };
+  }
 
 
 
   // STEP-4: Analyze a single workout with ACWR
-static analyzeWorkout(workout: WorkoutInput, userId?: string) {
-  const engineeredMetrics = engineerWorkoutFeatures(workout);
+  static analyzeWorkout(workout: WorkoutInput, userId?: string) {
+    const engineeredMetrics = engineerWorkoutFeatures(workout);
 
-  // --- Historical workloads (exclude current workout date) ---
-  // const acuteLoad = userId
-  //   ? this.getWorkloadLastNDays(
-  //       userId,
-  //       7,
-  //       workout.workoutDate
-  //     ) + engineeredMetrics.gameWorkload
-  //   : engineeredMetrics.gameWorkload;
+    // --- Historical workloads (exclude current workout date) ---
+    // const acuteLoad = userId
+    //   ? this.getWorkloadLastNDays(
+    //       userId,
+    //       7,
+    //       workout.workoutDate
+    //     ) + engineeredMetrics.gameWorkload
+    //   : engineeredMetrics.gameWorkload;
 
-  // const chronicLoad = userId
-  //   ? this.getWorkloadLastNDays(
-  //       userId,
-  //       28,
-  //       workout.workoutDate
-  //     ) / 4 || acuteLoad
-  //   : acuteLoad;
+    // const chronicLoad = userId
+    //   ? this.getWorkloadLastNDays(
+    //       userId,
+    //       28,
+    //       workout.workoutDate
+    //     ) / 4 || acuteLoad
+    //   : acuteLoad;
 
-  // const acwr = this.calculateACWR(acuteLoad, chronicLoad);
-  // STEP-4: ACWR using AVERAGES (correct method)
+    // const acwr = this.calculateACWR(acuteLoad, chronicLoad);
+    // STEP-4: ACWR using AVERAGES (correct method)
 
-const acuteAvg = userId
-  ? (this.getWorkloadLastNDays(
-      userId,
-      7,
-new Date().toISOString()    ) + engineeredMetrics.gameWorkload) / 7
-  : engineeredMetrics.gameWorkload;
+    const acuteAvg = userId
+      ? (this.getWorkloadLastNDays(
+        userId,
+        7,
+        new Date().toISOString()) + engineeredMetrics.gameWorkload) / 7
+      : engineeredMetrics.gameWorkload;
 
-const chronicAvg = userId
-  ? this.getWorkloadLastNDays(
-      userId,
-      28,
-      workout.workoutDate
-    ) / 28
-  : acuteAvg;
+    const chronicAvg = userId
+      ? this.getWorkloadLastNDays(
+        userId,
+        28,
+        workout.workoutDate
+      ) / 28
+      : acuteAvg;
 
-// Safety fallback
-const safeChronic = chronicAvg === 0 ? acuteAvg : chronicAvg;
+    // Safety fallback
+    const safeChronic = chronicAvg === 0 ? acuteAvg : chronicAvg;
 
-const acwr = Number((acuteAvg / safeChronic).toFixed(2));
-const acwrZone = this.getACWRZone(acwr);
-;
+    const acwr = Number((acuteAvg / safeChronic).toFixed(2));
+    const acwrZone = this.getACWRZone(acwr);
+    ;
 
-  return {
-    engineeredMetrics,
-    workload: {
-      acuteAvg,
-      chronicAvg,
-      acwr,
-      acwrZone,
-    },
-  };
-}
+    return {
+      engineeredMetrics,
+      workload: {
+        acuteAvg,
+        chronicAvg,
+        acwr,
+        acwrZone,
+      },
+    };
+  }
 
 
 
 
   // Calculate performance metrics for a user and sport type
-  
+
   static calculateMetrics(
     userId: string,
     sportType: 'running' | 'cycling' | 'weightlifting',
     startDate: string,
-    endDate: string
+    endDate: string,
+    skipPreviousComparison: boolean = false   // ✅ add this
+
   ): PerformanceMetrics {
-    
+
     const workouts = WorkoutService.getWorkoutsByUser(userId, 1000, 0);
-    
+
     // Filter by date range and sport type
     const filteredWorkouts = workouts.filter(w => {
       const workoutDate = new Date(w.date);
@@ -231,8 +269,8 @@ const acwrZone = this.getACWRZone(acwr);
     const maxPower = powers.length > 0 ? Math.max(...powers) : undefined;
 
     const cyclingCadences = filteredWorkouts.map(w => w.cyclingCadence).filter(c => c !== null && c !== undefined) as number[];
-    const avgCyclingCadence = cyclingCadences.length > 0 
-      ? cyclingCadences.reduce((sum, c) => sum + c, 0) / cyclingCadences.length 
+    const avgCyclingCadence = cyclingCadences.length > 0
+      ? cyclingCadences.reduce((sum, c) => sum + c, 0) / cyclingCadences.length
       : undefined;
 
     const elevationGains = filteredWorkouts.map(w => w.elevationGain).filter(e => e !== null && e !== undefined) as number[];
@@ -248,8 +286,8 @@ const acwrZone = this.getACWRZone(acwr);
     const heartRates = filteredWorkouts
       .map(w => w.avgHeartRate || w.heartRate)
       .filter(hr => hr !== null && hr !== undefined) as number[];
-    const avgHeartRate = heartRates.length > 0 
-      ? heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length 
+    const avgHeartRate = heartRates.length > 0
+      ? heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length
       : undefined;
 
     const maxHeartRates = filteredWorkouts.map(w => w.maxHeartRate).filter(hr => hr !== null && hr !== undefined) as number[];
@@ -267,46 +305,57 @@ const acwrZone = this.getACWRZone(acwr);
     // Progress trend (compare with previous period)
     let progressTrend: 'improving' | 'stable' | 'declining' = 'stable';
     let progressPercentage = 0;
-    try {
-      const previousPeriod = this.getPreviousPeriod(startDate, endDate);
-      const previousMetrics = this.calculateMetrics(userId, sportType, previousPeriod.start, previousPeriod.end);
-      progressTrend = this.determineTrend(fitnessScore, previousMetrics.fitnessScore);
-      progressPercentage = previousMetrics.fitnessScore > 0
-        ? ((fitnessScore - previousMetrics.fitnessScore) / previousMetrics.fitnessScore) * 100
-        : 0;
-    } catch (error) {
-      // If previous period calculation fails, default to stable
-      console.error('Error calculating previous period metrics:', error);
-      progressTrend = 'stable';
-      progressPercentage = 0;
-    }
+    if (!skipPreviousComparison) {
+      try {
+        const previousPeriod = this.getPreviousPeriod(startDate, endDate);
+        const previousMetrics = this.calculateMetrics(userId, sportType, previousPeriod.start, previousPeriod.end, true);
+        if (previousMetrics && previousMetrics.fitnessScore !== undefined) {
+          progressTrend = this.determineTrend(
+            fitnessScore,
+            previousMetrics.fitnessScore
+          );
 
-    return {
-      totalWorkouts,
-      totalDuration,
-      totalDistance,
-      avgDuration,
-      avgDistance,
-      avgPace,
-      avgSpeed,
-      maxSpeed,
-      avgCadence,
-      bestPace,
-      avgPower,
-      maxPower,
-      avgCyclingCadence,
-      totalElevationGain: totalElevationGain > 0 ? totalElevationGain : undefined,
-      totalVolume: totalVolume > 0 ? totalVolume : undefined,
-      avgVolume,
-      exercisesCount: exercisesCount > 0 ? exercisesCount : undefined,
-      avgHeartRate,
-      maxHeartRate,
-      minHeartRate,
-      trainingLoad,
-      fitnessScore,
-      progressTrend,
-      progressPercentage,
-    };
+          progressPercentage =
+            previousMetrics.fitnessScore > 0
+              ? ((fitnessScore - previousMetrics.fitnessScore) /
+                previousMetrics.fitnessScore) *
+              100
+              : 0;
+        } 
+      } catch (error) {
+        // If previous period calculation fails, default to stable
+        console.error('Error calculating previous period metrics:', error);
+        progressTrend = 'stable';
+        progressPercentage = 0;
+      }
+
+      return {
+        totalWorkouts,
+        totalDuration,
+        totalDistance,
+        avgDuration,
+        avgDistance,
+        avgPace,
+        avgSpeed,
+        maxSpeed,
+        avgCadence,
+        bestPace,
+        avgPower,
+        maxPower,
+        avgCyclingCadence,
+        totalElevationGain: totalElevationGain > 0 ? totalElevationGain : undefined,
+        totalVolume: totalVolume > 0 ? totalVolume : undefined,
+        avgVolume,
+        exercisesCount: exercisesCount > 0 ? exercisesCount : undefined,
+        avgHeartRate,
+        maxHeartRate,
+        minHeartRate,
+        trainingLoad,
+        fitnessScore,
+        progressTrend,
+        progressPercentage,
+      };
+    }
   }
 
   // Get performance trends over time
@@ -319,7 +368,7 @@ const acwrZone = this.getACWRZone(acwr);
   ): PerformanceTrend[] {
     try {
       const workouts = WorkoutService.getWorkoutsByUser(userId, 1000, 0);
-      
+
       const filteredWorkouts = workouts.filter(w => {
         try {
           const workoutDate = new Date(w.date);
@@ -337,7 +386,7 @@ const acwrZone = this.getACWRZone(acwr);
 
       // Group by interval
       const grouped = this.groupWorkoutsByInterval(filteredWorkouts, interval);
-      
+
       return grouped.map(group => {
         try {
           const speeds = group.workouts.map(w => w.speed || w.avgSpeed).filter(s => s !== null && s !== undefined) as number[];
@@ -466,7 +515,7 @@ const acwrZone = this.getACWRZone(acwr);
     const historicalStart = startDate.toISOString().split('T')[0];
 
     const trends = this.getTrends(userId, sportType, historicalStart, endDate, 'week');
-    
+
     if (trends.length < 2) {
       return predictions; // Not enough data
     }
@@ -510,10 +559,20 @@ const acwrZone = this.getACWRZone(acwr);
     }
 
     // Fitness score prediction
-    const fitnessTrend = this.calculateTrendSlope(trends.map(t => {
-      const weekMetrics = this.calculateMetrics(userId, sportType, t.date, t.date);
-      return weekMetrics.fitnessScore;
-    }));
+    const fitnessTrend = this.calculateTrendSlope(
+      trends
+        .map(t => {
+          const weekMetrics = this.calculateMetrics(
+            userId,
+            sportType,
+            t.date,
+            t.date
+          );
+
+          return weekMetrics ? weekMetrics.fitnessScore : 0;
+        })
+    );
+
 
     predictions.push({
       metric: 'Fitness Score',
@@ -537,7 +596,7 @@ const acwrZone = this.getACWRZone(acwr);
     // Real TSS would use power/pace zones, but we'll use duration and intensity
     return workouts.reduce((load, workout) => {
       let intensity = 0.5; // Base intensity
-      
+
       if (workout.avgHeartRate && workout.maxHeartRate) {
         // Estimate intensity from heart rate
         const hrPercent = (workout.avgHeartRate / workout.maxHeartRate) * 100;
@@ -589,7 +648,7 @@ const acwrZone = this.getACWRZone(acwr);
   private static determineTrend(current: number, previous: number): 'improving' | 'stable' | 'declining' {
     const change = current - previous;
     const percentChange = previous > 0 ? (change / previous) * 100 : 0;
-    
+
     if (percentChange > 5) return 'improving';
     if (percentChange < -5) return 'declining';
     return 'stable';
@@ -599,7 +658,7 @@ const acwrZone = this.getACWRZone(acwr);
     const start = new Date(startDate);
     const end = new Date(endDate);
     const duration = end.getTime() - start.getTime();
-    
+
     return {
       start: new Date(start.getTime() - duration).toISOString().split('T')[0],
       end: startDate,
@@ -663,7 +722,7 @@ const acwrZone = this.getACWRZone(acwr);
     // Simplified percentile calculation
     // In production, this would use actual dataset distribution
     const deviation = Math.abs(userValue - datasetAvg) / datasetAvg;
-    
+
     if (lowerIsBetter) {
       // For pace (lower is better)
       if (userValue < datasetAvg * 0.9) return 90;
@@ -681,13 +740,13 @@ const acwrZone = this.getACWRZone(acwr);
 
   private static calculateTrendSlope(values: number[]): number {
     if (values.length < 2) return 0;
-    
+
     const n = values.length;
     const sumX = (n * (n - 1)) / 2;
     const sumY = values.reduce((sum, v) => sum + v, 0);
     const sumXY = values.reduce((sum, v, i) => sum + (i * v), 0);
     const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6;
-    
+
     const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
     return slope;
   }
@@ -698,40 +757,40 @@ const acwrZone = this.getACWRZone(acwr);
     return `${minutes}:${String(seconds).padStart(2, '0')}`;
   }
 
-    // STEP-4: Get workload for last N days
+  // STEP-4: Get workload for last N days
   // STEP-4: Get AVERAGE workload for last N days (excluding current workout)
-private static getWorkloadLastNDays(
-  userId: string,
-  days: number,
-  referenceDate: string
-): number {
-  const workouts = WorkoutService.getWorkoutsByUser(userId, 1000, 0);
+  private static getWorkloadLastNDays(
+    userId: string,
+    days: number,
+    referenceDate: string
+  ): number {
+    const workouts = WorkoutService.getWorkoutsByUser(userId, 1000, 0);
 
-  const ref = new Date(referenceDate);
-  const cutoff = new Date(referenceDate);
-  cutoff.setDate(cutoff.getDate() - days);
+    const ref = new Date(referenceDate);
+    const cutoff = new Date(referenceDate);
+    cutoff.setDate(cutoff.getDate() - days);
 
-  const filtered = workouts.filter(w => {
-  const d = new Date(w.timestamp ?? w.date);
-  return d >= cutoff && d < new Date(referenceDate);
-});
+    const filtered = workouts.filter(w => {
+      const d = new Date(w.timestamp ?? w.date);
+      return d >= cutoff && d < new Date(referenceDate);
+    });
 
 
-  if (filtered.length === 0) return 0;
-console.log("Filtered workouts:", filtered.length);
+    if (filtered.length === 0) return 0;
+    console.log("Filtered workouts:", filtered.length);
 
-  const totalLoad = filtered.reduce((sum, w) => {
-    const intensity =
-      w.avgHeartRate && w.maxHeartRate
-        ? w.avgHeartRate / w.maxHeartRate
-        : 0.7;
+    const totalLoad = filtered.reduce((sum, w) => {
+      const intensity =
+        w.avgHeartRate && w.maxHeartRate
+          ? w.avgHeartRate / w.maxHeartRate
+          : 0.7;
 
-    return sum + w.duration * intensity;
-  }, 0);
+      return sum + w.duration * intensity;
+    }, 0);
 
-  // ✅ THIS IS THE KEY FIX
-  return totalLoad / days; // DAILY AVERAGE
-}
+    // ✅ THIS IS THE KEY FIX
+    return totalLoad / days; // DAILY AVERAGE
+  }
 
 
 

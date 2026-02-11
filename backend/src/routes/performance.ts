@@ -2,7 +2,6 @@ import { Router, Response } from 'express';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { PerformanceService, PerformanceTrend, DatasetComparison, FitnessPrediction } from '../services/performanceService';
 import { z } from 'zod';
-
 export const performanceRoutes = Router();
 
 
@@ -53,9 +52,11 @@ const analysisQuerySchema = z.object({
 
 // Get performance analysis
 performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
+
   try {
     const userId = req.userId!;
     const validated = analysisQuerySchema.parse(req.query);
+
     
     // Calculate date range
     const endDate = new Date();
@@ -78,6 +79,7 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
 
     const startDateStr = startDate.toISOString().split('T')[0];
     const endDateStr = endDate.toISOString().split('T')[0];
+    
 
     // Calculate metrics
     let metrics;
@@ -116,6 +118,8 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
       console.error('Error getting trends:', error);
       trends = [];
     }
+          const spikeInfo = PerformanceService.detectLoadSpike(trends);
+
 
     // Compare with dataset
     let comparisons: DatasetComparison[] = [];
@@ -151,6 +155,7 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
       comparisons,
       predictions,
         insights,   // ✅ new addition
+        spikeInfo,   // ✅ new addition
       period: {
         start: startDateStr,
         end: endDateStr,
