@@ -820,6 +820,50 @@ if (trends.length < 2) {
       progressPercentage: 0,
     };
   }
+  static getAllWorkoutsForUser(userId: string) {
+  const workouts = WorkoutService.getWorkoutsByUser(userId, 1000, 0);
+
+  return workouts.map(w => {
+    const base = {
+      id: w.id,
+      type: w.type,
+      date: w.date,
+      duration: w.duration,
+      avgHeartRate: w.avgHeartRate
+    };
+
+    if (w.type === 'running') {
+      return {
+        ...base,
+        distance: w.distance,
+        cadence: w.cadence,
+        avgSpeed: w.avgSpeed
+      };
+    }
+
+    if (w.type === 'cycling') {
+      return {
+        ...base,
+        distance: w.distance,
+        avgPower: w.avgPower,
+        cyclingCadence: w.cyclingCadence
+      };
+    }
+
+    if (w.type === 'weightlifting') {
+      return {
+        ...base,
+        sets: w.sets,
+        reps: w.reps,
+        weight: w.weight,
+        volume: w.volume
+      };
+    }
+
+    return base;
+  });
+}
+
 }
 
 

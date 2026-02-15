@@ -49,12 +49,12 @@ app.use('/api/samples', sampleRoutes);
 app.use('/api/plans', planRoutes);
 app.use('/api/diets', dietRoutes);
 app.use('/api/injury', injuryRoutes);
+app.use('/api/performance', performanceRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
-
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);

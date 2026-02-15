@@ -48,30 +48,65 @@ export interface WorkoutEntry {
 export class WorkoutService {
   static createWorkout(userId: string, data: Partial<WorkoutEntry>): WorkoutEntry {
     const workoutId = randomUUID();
-    const now = new Date().toISOString();
+const now = new Date().toISOString();
 
-    // 🔥 STEP 6: Calculate training load properly
 
+// =============================
+// AUTO DERIVED METRICS (NEW)
+// =============================
+
+// avgSpeed (running + cycling)
+if (
+  data.distance &&
+  data.duration &&
+  !data.avgSpeed
+) {
+  data.avgSpeed =
+    data.distance / (data.duration / 60);
+}
+
+
+// avgPower for ALL workouts
+if (!data.avgPower && data.avgHeartRate) {
+  data.avgPower = Number((data.avgHeartRate * 1.2).toFixed(2));
+}
+
+
+// volume (weightlifting)
+let volume = null;
+if (
+  data.type === "weightlifting" &&
+  data.sets &&
+  data.reps &&
+  data.weight
+) {
+  volume = data.sets * data.reps * data.weight;
+}
+
+
+// =============================
+// TRAINING LOAD
+// =============================
 let trainingLoad = null;
 
 if (data.duration) {
-  let intensity = 0.7; // default
+  let intensity = 0.7;
 
   if (data.avgHeartRate && data.maxHeartRate) {
     intensity = data.avgHeartRate / data.maxHeartRate;
   } else if (data.avgHeartRate) {
-    intensity = data.avgHeartRate / 190; // fallback max HR
+    intensity = data.avgHeartRate / 190;
   }
 
   trainingLoad = Number((data.duration * intensity).toFixed(2));
 }
 
+    // 🔥 STEP 6: Calculate training load properly
 
-    // Calculate volume for weightlifting
-    let volume = null;
-    if (data.type === 'weightlifting' && data.sets && data.reps && data.weight) {
-      volume = data.sets * data.reps * data.weight;
-    }
+
+
+
+  
 
     db.prepare(`
       INSERT INTO workout_entries (
@@ -123,7 +158,7 @@ if (data.duration) {
       data.weight || null,
       data.restTime || null,
       volume,
-      data.trainingLoad || null,
+      trainingLoad,
       now,
       now
     );
@@ -147,6 +182,7 @@ if (data.duration) {
     
     return rows.map(row => this.mapRowToWorkout(row));
   }
+  
 
   static updateWorkout(workoutId: string, userId: string, data: Partial<WorkoutEntry>): WorkoutEntry {
     const updateFields: string[] = [];
@@ -280,6 +316,7 @@ if (data.duration) {
         WHERE id = ? AND user_id = ?
       `).run(...values);
     }
+    
 
     return this.getWorkoutById(workoutId)!;
   }

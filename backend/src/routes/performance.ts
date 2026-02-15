@@ -57,11 +57,11 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
     const userId = req.userId!;
     const validated = analysisQuerySchema.parse(req.query);
 
-    
+
     // Calculate date range
     const endDate = new Date();
     const startDate = new Date();
-    
+
     switch (validated.timeRange) {
       case 'week':
         startDate.setDate(endDate.getDate() - 7);
@@ -79,7 +79,7 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
 
     const startDateStr = startDate.toISOString().split('T')[0];
     const endDateStr = endDate.toISOString().split('T')[0];
-    
+
 
     // Calculate metrics
     let metrics;
@@ -118,7 +118,7 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
       console.error('Error getting trends:', error);
       trends = [];
     }
-          const spikeInfo = PerformanceService.detectLoadSpike(trends);
+    const spikeInfo = PerformanceService.detectLoadSpike(trends);
 
 
     // Compare with dataset
@@ -144,9 +144,9 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
       predictions = [];
     }
     const insights = PerformanceService.generateTrainingInsights(
-  metrics,
-  metrics.trainingLoad > 0 ? metrics.trainingLoad / 100 : 1
-);
+      metrics,
+      metrics.trainingLoad > 0 ? metrics.trainingLoad / 100 : 1
+    );
 
 
     res.json({
@@ -154,8 +154,8 @@ performanceRoutes.get('/analysis', async (req: AuthRequest, res: Response) => {
       trends,
       comparisons,
       predictions,
-        insights,   // ✅ new addition
-        spikeInfo,   // ✅ new addition
+      insights,   // ✅ new addition
+      spikeInfo,   // ✅ new addition
       period: {
         start: startDateStr,
         end: endDateStr,
@@ -175,10 +175,10 @@ performanceRoutes.get('/trends', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const validated = analysisQuerySchema.parse(req.query);
-    
+
     const endDate = new Date();
     const startDate = new Date();
-    
+
     switch (validated.timeRange) {
       case 'week':
         startDate.setDate(endDate.getDate() - 7);
@@ -206,9 +206,35 @@ performanceRoutes.get('/trends', async (req: AuthRequest, res: Response) => {
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Failed to fetch trends' });
   }
+
+  // ✅ Export all workouts (for Jupyter analysis)
+  
+
 });
 
+performanceRoutes.get('/export-workouts', async (req: AuthRequest, res: Response) => {
+    console.log('🔥 EXPORT WORKOUTS ROUTE HIT');
 
+    try {
+      console.log('User ID:', req.userId);
+
+      const userId = req.userId!;
+      const workouts = PerformanceService.getAllWorkoutsForUser(userId);
+
+      console.log('Workout count:', workouts.length);
+
+      res.json({
+        count: workouts.length,
+        workouts
+      });
+
+    } catch (error: any) {
+      console.error('EXPORT ERROR:', error);
+      res.status(500).json({
+        error: error.message || 'Failed to export workouts'
+      });
+    }
+  });
 // {
 //     "workout": {
 //         "workoutType": "Running",
