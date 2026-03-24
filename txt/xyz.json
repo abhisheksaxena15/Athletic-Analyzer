@@ -1,0 +1,124 @@
+{
+    "metrics": {
+        "totalWorkouts": 19,
+        "totalDuration": 970,
+        "totalDistance": 135,
+        "avgDuration": 51.05263157894737,
+        "avgDistance": 7.105263157894737,
+        "avgPace": 5.925925925925926,
+        "avgSpeed": 10.125,
+        "maxSpeed": 13,
+        "avgCadence": 168.75,
+        "bestPace": 4.615384615384615,
+        "avgPower": 175.5,
+        "maxPower": 180,
+        "avgHeartRate": 144.21052631578948,
+        "maxHeartRate": 144.21052631578948,
+        "minHeartRate": 144.21052631578948,
+        "trainingLoad": 485,
+        "fitnessScore": 76.9375,
+        "progressTrend": "stable",
+        "progressPercentage": 0
+    },
+    "trends": [
+        {
+            "date": "2026-01-25",
+            "distance": 5,
+            "heartRate": 135,
+            "trainingLoad": 20
+        },
+        {
+            "date": "2026-02-01",
+            "distance": 42,
+            "cadence": 165,
+            "heartRate": 136.875,
+            "trainingLoad": 162.5
+        },
+        {
+            "date": "2026-02-08",
+            "pace": 5.853658536585366,
+            "speed": 10.25,
+            "distance": 78,
+            "cadence": 171,
+            "heartRate": 151.25,
+            "power": 171,
+            "trainingLoad": 272.5
+        },
+        {
+            "date": "2026-02-15",
+            "pace": 6,
+            "speed": 10,
+            "distance": 10,
+            "heartRate": 150,
+            "power": 180,
+            "trainingLoad": 30
+        }
+    ],
+    "comparisons": [
+        {
+            "metric": "Average Pace",
+            "userValue": 5.925925925925926,
+            "datasetAverage": 6,
+            "datasetPercentile": 75,
+            "comparison": "above_average",
+            "difference": 1.2345679012345734
+        },
+        {
+            "metric": "Average Cadence",
+            "userValue": 168.75,
+            "datasetAverage": 165,
+            "datasetPercentile": 75,
+            "comparison": "above_average",
+            "difference": 2.272727272727273
+        },
+        {
+            "metric": "Average Heart Rate",
+            "userValue": 144.21052631578948,
+            "datasetAverage": 150,
+            "datasetPercentile": 50,
+            "comparison": "average",
+            "difference": -3.8596491228070136
+        }
+    ],
+    "predictions": [
+        {
+            "metric": "5K Race Time",
+            "currentValue": 29.629629629629626,
+            "predictedValue": 38.41011743450768,
+            "timeframe": "3 months",
+            "confidence": 40,
+            "factors": [
+                "Current pace: 5:56/km",
+                "Trend: improving",
+                "Training frequency: 19 workouts"
+            ]
+        },
+        {
+            "metric": "Fitness Score",
+            "currentValue": 76.9375,
+            "predictedValue": 100,
+            "timeframe": "3 months",
+            "confidence": 32,
+            "factors": [
+                "Current score: 76.9375/100",
+                "Progress trend: stable",
+                "Training consistency: 19 workouts"
+            ]
+        }
+    ],
+    "insights": {
+        "fatigueScore": 100,
+        "riskLevel": "High",
+        "recommendation": "Reduce training intensity immediately.",
+        "advice": "High risk of overtraining. Prioritize recovery."
+    },
+    "spikeInfo": {
+        "spikeDetected": false,
+        "increasePercent": -156.9
+    },
+    "period": {
+        "start": "2026-01-15",
+        "end": "2026-02-15",
+        "range": "month"
+    }
+}

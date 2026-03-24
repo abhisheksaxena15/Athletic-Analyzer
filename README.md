@@ -196,11 +196,11 @@ The application uses SQLite by default. The database is automatically created on
 
 1. ✅ **User Registration & Profile Management** (Completed)
 2. ⏳ **Smartwatch Data Input / Manual Input**
-3. ⏳ **Performance Analysis**
+3. ✅ **Performance Analysis**
 4. ⏳ **Sleep Quality Analysis**
-5. ⏳ **Injury Risk Prediction**
-6. ⏳ **Personalized Training Plan Generator**
-7. ⏳ **Diet Recommendation System**
+5. ✅ **Injury Risk Prediction**
+6. ✅ **Personalized Training Plan Generator**
+7. ✅ **Diet Recommendation System**
 
 ## Contributing
 

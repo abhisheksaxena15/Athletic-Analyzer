@@ -1,12 +1,61 @@
 {
-    "count": 23,
     "workouts": [
+        {
+            "id": "7f5db236-453b-4d39-8e36-e6898933b10e",
+            "type": "cycling",
+            "date": "2026-02-15",
+            "duration": 60,
+            "distance": 25,
+            "avgHeartRate": 140,
+            "avgPower": 168,
+            "cadence": 90
+        },
+        {
+            "id": "c6ab8d3a-d9c6-4732-916f-e0b82e234409",
+            "type": "running",
+            "date": "2026-02-15",
+            "duration": 30,
+            "distance": 5,
+            "avgHeartRate": 150,
+            "cadence": null,
+            "avgSpeed": 10
+        },
+        {
+            "id": "eaa4c1d1-36ec-4910-825e-c45bb139ccab",
+            "type": "running",
+            "date": "2026-02-15",
+            "duration": 30,
+            "distance": 5,
+            "avgHeartRate": 150,
+            "cadence": null,
+            "avgSpeed": 10
+        },
+        {
+            "id": "e6f3071f-bc92-4deb-9874-925988764f3f",
+            "type": "running",
+            "date": "2026-02-13",
+            "duration": 60,
+            "distance": 13,
+            "avgHeartRate": 150,
+            "cadence": null,
+            "avgSpeed": 13
+        },
+        {
+            "id": "cfc36a9a-4177-47b9-b531-7d9e3f1b791a",
+            "type": "running",
+            "date": "2026-02-12",
+            "duration": 40,
+            "distance": 5,
+            "avgHeartRate": 135,
+            "cadence": null,
+            "avgSpeed": 7.5
+        },
         {
             "id": "11d0f47d-5cb0-4c75-9885-6c756cb9b142",
             "type": "weightlifting",
             "date": "2026-02-11",
             "duration": 60,
-            "avgHeartRate": 120,
+            "exerciseName": null,
             "sets": 10,
             "reps": 8,
             "weight": 100,
@@ -17,67 +66,67 @@
             "type": "running",
             "date": "2026-02-10",
             "duration": 180,
-            "avgHeartRate": 185,
             "distance": 25,
+            "avgHeartRate": 185,
             "cadence": 180,
-            "avgSpeed": null
+            "avgSpeed": 8.33
         },
         {
             "id": "7f24e3b1-cffb-429a-83b7-480ba218f8de",
             "type": "running",
             "date": "2026-02-10",
             "duration": 60,
-            "avgHeartRate": 155,
             "distance": 8,
+            "avgHeartRate": 155,
             "cadence": 170,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "918505d8-66f8-446f-ab81-8e434acbb823",
             "type": "cycling",
             "date": "2026-02-10",
             "duration": 75,
-            "avgHeartRate": 150,
             "distance": 95,
+            "avgHeartRate": 150,
             "avgPower": 210,
-            "cyclingCadence": 90
+            "cadence": 90
         },
         {
             "id": "516ddead-a568-4996-8279-f2f18c4ab9b9",
             "type": "cycling",
             "date": "2026-02-10",
             "duration": 75,
-            "avgHeartRate": 150,
             "distance": 25,
+            "avgHeartRate": 150,
             "avgPower": 210,
-            "cyclingCadence": 90
+            "cadence": 90
         },
         {
             "id": "9db39671-8dbe-4bcb-8f21-56a20f81d2b3",
             "type": "running",
             "date": "2026-02-10",
             "duration": 60,
-            "avgHeartRate": 155,
             "distance": 8,
+            "avgHeartRate": 155,
             "cadence": 170,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "36244b5c-a1e7-4b4d-8bb2-3137d1fc3448",
             "type": "running",
             "date": "2026-02-10",
             "duration": 60,
-            "avgHeartRate": 155,
             "distance": 8,
+            "avgHeartRate": 155,
             "cadence": 170,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "a20b8d3b-92c9-40c0-870f-ede072af14dc",
             "type": "weightlifting",
             "date": "2026-02-08",
             "duration": 120,
-            "avgHeartRate": 150,
+            "exerciseName": null,
             "sets": 5,
             "reps": 10,
             "weight": 60,
@@ -88,67 +137,67 @@
             "type": "running",
             "date": "2026-02-08",
             "duration": 45,
-            "avgHeartRate": 140,
             "distance": 6,
+            "avgHeartRate": 140,
             "cadence": 165,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "d31d8502-288d-4824-8075-9563f0f80228",
             "type": "running",
             "date": "2026-02-08",
             "duration": 40,
-            "avgHeartRate": 135,
             "distance": 5,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 7.5
         },
         {
             "id": "b9f6b0ee-9c39-4c3d-ad65-a5f9e6fcf4ec",
             "type": "running",
             "date": "2026-02-07",
             "duration": 45,
-            "avgHeartRate": 140,
             "distance": 6,
+            "avgHeartRate": 140,
             "cadence": 165,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "ce1533ca-359f-458c-8ae7-21ac9feaa649",
             "type": "running",
             "date": "2026-02-07",
             "duration": 40,
-            "avgHeartRate": 135,
             "distance": 5,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 7.5
         },
         {
             "id": "47093eea-bc82-4518-8498-fb8921d406cb",
             "type": "running",
             "date": "2026-02-06",
             "duration": 45,
-            "avgHeartRate": 140,
             "distance": 6,
+            "avgHeartRate": 140,
             "cadence": 165,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "fb2fc576-21fa-400f-9580-4fd0a3226ddc",
             "type": "running",
             "date": "2026-02-05",
             "duration": 40,
-            "avgHeartRate": 135,
             "distance": 5,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 7.5
         },
         {
             "id": "86e6a279-49f0-45c9-83dc-f375506071ad",
             "type": "weightlifting",
             "date": "2026-02-05",
             "duration": 180,
-            "avgHeartRate": 120,
+            "exerciseName": null,
             "sets": 10,
             "reps": 10,
             "weight": 100,
@@ -159,47 +208,47 @@
             "type": "running",
             "date": "2026-02-05",
             "duration": 45,
-            "avgHeartRate": 140,
             "distance": 6,
+            "avgHeartRate": 140,
             "cadence": 165,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "6754485f-0b1e-4dde-9682-01764234d7c2",
             "type": "running",
             "date": "2026-02-05",
             "duration": 40,
-            "avgHeartRate": 135,
             "distance": 5,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 7.5
         },
         {
             "id": "a70b284c-4f99-4eda-8e57-2b16f27215ab",
             "type": "running",
             "date": "2026-02-05",
             "duration": 30,
-            "avgHeartRate": 135,
             "distance": 4,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 8
         },
         {
             "id": "7eadbf9d-66a9-452e-99f9-0c919b0a612a",
             "type": "running",
             "date": "2026-02-04",
             "duration": 40,
-            "avgHeartRate": 135,
             "distance": 5,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 7.5
         },
         {
             "id": "98d87e1a-cfe7-49f1-9397-8d1d5ebcb875",
             "type": "weightlifting",
             "date": "2026-02-02",
             "duration": 60,
-            "avgHeartRate": 120,
+            "exerciseName": null,
             "sets": 10,
             "reps": 2,
             "weight": 100,
@@ -210,7 +259,7 @@
             "type": "weightlifting",
             "date": "2026-02-02",
             "duration": 60,
-            "avgHeartRate": 120,
+            "exerciseName": null,
             "sets": 5,
             "reps": 8,
             "weight": 100,
@@ -221,7 +270,7 @@
             "type": "weightlifting",
             "date": "2026-02-01",
             "duration": 60,
-            "avgHeartRate": 120,
+            "exerciseName": null,
             "sets": 5,
             "reps": 8,
             "weight": 100,
@@ -232,10 +281,11 @@
             "type": "running",
             "date": "2026-01-27",
             "duration": 40,
-            "avgHeartRate": 135,
             "distance": 5,
+            "avgHeartRate": 135,
             "cadence": null,
-            "avgSpeed": null
+            "avgSpeed": 7.5
         }
-    ]
+    ],
+    "count": 28
 }
